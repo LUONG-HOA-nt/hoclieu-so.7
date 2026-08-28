@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Luyện tập Lịch sử THCS</title>
+    <style>
+        /* ================= CẤU HÌNH GIAO DIỆN ================= */
+        :root {
+            --bg-color: #f4ebd8;
+            --text-color: #3b2818;
+            --primary-color: #8b3a3a;
+            --secondary-color: #cda434;
+            --correct-color: #2e7d32;
+            --incorrect-color: #c62828;
+            --card-bg: #ffffff;
+            --shadow: 0 4px 8px rgba(0,0,0,0.1);
+            --font-main: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.5;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(205, 164, 52, 0.05) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(139, 58, 58, 0.05) 0%, transparent 20%);
+            background-attachment: fixed;
+        }
+
+        .container {
+            max-width: 950px;
+            margin: 0 auto;
+            padding: 15px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Tiêu đề và Header */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            margin-bottom: 15px;
+            border-bottom: 2px solid var(--secondary-color);
+        }
+
+        .app-title {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        /* Nút bấm chung */
+        button {
+            font-family: var(--font-main);
+            border: none;
+            cursor: pointer;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        button:active {
+            transform: scale(0.97);
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 10px 20px;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background-color: #6d2d2d;
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 10px 20px;
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background-color: #b5902b;
+        }
+
+        .btn-icon {
+            background-color: var(--card-bg);
+            color: var(--primary-color);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            padding: 0;
+            border: 2px solid var(--secondary-color);
+        }
+
+        /* Màn hình (Screens) */
+        .screen {
+            display: none;
+            flex: 1;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .screen.active {
+            display: flex;
+            flex-direction: column;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Màn hình Chào */
+        #welcome-screen {
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 30px 20px;
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            border: 4px solid var(--secondary-color);
+        }
+
+        .welcome-icon {
+            font-size: 70px;
+            margin-bottom: 15px;
+        }
+
+        .welcome-title {
+            font-size: 2.2rem;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        .welcome-desc {
+            font-size: 1.1rem;
+            margin-bottom: 25px;
+            color: #555;
+        }
+
+        .settings-box {
+            background-color: var(--bg-color);
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            text-align: left;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .setting-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            font-size: 1.05rem;
+        }
+
+        .setting-item input[type="checkbox"] {
+            width: 22px;
+            height: 22px;
+            margin-right: 12px;
+            accent-color: var(--primary-color);
+            cursor: pointer;
+        }
+
+        /* Màn hình Làm bài */
+        .quiz-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            background: var(--card-bg);
+            padding: 12px 20px;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+        }
+
+        .progress-text {
+            font-weight: bold;
+            font-size: 1.15rem;
+            color: var(--primary-color);
+        }
+
+        .timer {
+            font-size: 1.2rem;
+            font-weight: bold;
+            background: var(--secondary-color);
+            color: white;
+            padding: 4px 14px;
+            border-radius: 20px;
+        }
+
+        .question-card {
+            background: var(--card-bg);
+            padding: 24px;
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            margin-bottom: 15px;
+            border-top: 6px solid var(--primary-color);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .question-text {
+            font-size: 1.45rem;
+            margin-bottom: 20px;
+            font-weight: 600;
+            line-height: 1.4;
+        }
+
+        /* Tối ưu hóa lưới đáp án: hiển thị 2 cột trên màn hình rộng */
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+
+        @media (min-width: 640px) {
+            .options-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 14px;
+            }
+        }
+
+        .option-btn {
+            background: #f8f9fa;
+            border: 2px solid #e0e0e0;
+            color: var(--text-color);
+            padding: 12px 16px;
+            font-size: 1.1rem;
+            text-align: left;
+            justify-content: flex-start;
+            border-radius: 10px;
+            box-shadow: none;
+            min-height: 54px; /* Đảm bảo chiều cao tối thiểu cho tương tác cảm ứng */
+            line-height: 1.3;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            background: #e9ecef;
+            border-color: #adb5bd;
+        }
+
+        .option-btn.selected {
+            border-color: var(--primary-color);
+            background: #ffebee;
+        }
+
+        .option-btn.correct {
+            background-color: var(--correct-color);
+            color: white;
+            border-color: var(--correct-color);
+        }
+
+        .option-btn.incorrect {
+            background-color: var(--incorrect-color);
+            color: white;
+            border-color: var(--incorrect-color);
+        }
+
+        .feedback-box {
+            display: none;
+            margin-top: 20px;
+            padding: 15px 20px;
+            border-radius: 10px;
+            font-size: 1.05rem;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .feedback-box.correct {
+            display: block;
+            background-color: #e8f5e9;
+            border-left: 5px solid var(--correct-color);
+            color: #1b5e20;
+        }
+
+        .feedback-box.incorrect {
+            display: block;
+            background-color: #ffebee;
+            border-left: 5px solid var(--incorrect-color);
+            color: #b71c1c;
+        }
+
+        .feedback-title {
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-bottom: 6px;
+        }
+
+        .next-action {
+            display: none;
+            text-align: right;
+            margin-top: 15px;
+        }
+
+        /* Thanh tiến trình */
+        .progress-bar-container {
+            width: 100%;
+            height: 8px;
+            background-color: #e0e0e0;
+            border-radius: 4px;
+            margin-top: auto;
+            margin-bottom: 10px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background-color: var(--primary-color);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        /* Màn hình Kết quả */
+        #result-screen {
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: var(--card-bg);
+            padding: 30px 20px;
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            border: 4px solid var(--primary-color);
+        }
+
+        .result-score {
+            font-size: 3.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin: 15px 0;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 25px 0;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .stat-card {
+            background: var(--bg-color);
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.95rem;
+            color: #666;
+        }
+
+        .color-correct { color: var(--correct-color); }
+        .color-incorrect { color: var(--incorrect-color); }
+        .color-time { color: var(--secondary-color); }
+
+        .result-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .app-title { font-size: 1.15rem; }
+            .welcome-title { font-size: 1.8rem; }
+            .question-text { font-size: 1.25rem; }
+            .stats-grid { grid-template-columns: 1fr; gap: 10px; }
+            .result-actions { flex-direction: column; width: 100%; }
+            .result-actions button { width: 100%; }
+        }
+
+        /* Icons SVG nội bộ */
+        .icon-svg {
+            width: 22px;
+            height: 22px;
+            fill: currentColor;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Header chung -->
+    <header>
+        <div class="app-title">
+            <svg class="icon-svg" viewBox="0 0 24 24"><path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4M11.5,7V12.2L15.9,15.4L16.6,14.3L13,11.9V7H11.5Z"/></svg>
+            Luyện tập Lịch sử THCS
+        </div>
+        <div class="controls">
+            <button id="btn-toggle-music" class="btn-icon" title="Bật/Tắt nhạc nền" style="display: none;">
+                <svg id="icon-music-on" class="icon-svg" style="display: none;" viewBox="0 0 24 24"><path d="M21,3V15.5A3.5,3.5 0 0,1 17.5,19A3.5,3.5 0 0,1 14,15.5A3.5,3.5 0 0,1 17.5,12C18.04,12 18.55,12.12 19,12.34V6.47L9,8.6V17.5A3.5,3.5 0 0,1 5.5,21A3.5,3.5 0 0,1 2,17.5A3.5,3.5 0 0,1 5.5,14C6.04,14 6.55,14.12 7,14.34V6L21,3Z"/></svg>
+                <svg id="icon-music-off" class="icon-svg" viewBox="0 0 24 24"><path d="M4.27 3L3 4.27L7 8.27V14.34C6.55 14.12 6.04 14 5.5 14C3.57 14 2 15.57 2 17.5C2 19.43 3.57 21 5.5 21C7.43 21 9 19.43 9 17.5V10.27L13 14.27V15.5C13 17.43 14.57 19 16.5 19C17.3 19 18.04 18.73 18.63 18.27L20.73 20.36L22 19.09L4.27 3M16.5 14C16.82 14 17.13 14.05 17.42 14.13L19 15.71V12.34C18.55 12.12 18.04 12 17.5 12C16.89 12 16.3 12.16 15.8 12.44L14.77 11.41C15.43 10.5 16.4 10 17.5 10C19.43 10 21 11.57 21 13.5V3L9 5.6V6.68L12.06 9.74C12.59 9.3 13.25 9 14 9V14H16.5Z"/></svg>
+            </button>
+            <button id="btn-home-nav" class="btn-icon" title="Về trang chủ" style="display: none;">
+                <svg class="icon-svg" viewBox="0 0 24 24"><path d="M10,20V14H14V20H19V12H22L12,3L2,12H5V20H10Z"/></svg>
+            </button>
+        </div>
+    </header>
+
+    <!-- 1. Màn hình Chào -->
+    <section id="welcome-screen" class="screen active">
+        <div class="welcome-icon">🏛️</div>
+        <h1 class="welcome-title">Hành Trình Lịch Sử</h1>
+        <p class="welcome-desc">Ôn tập và củng cố kiến thức Lịch sử cấp Trung học Cơ sở qua các câu hỏi trắc nghiệm tương tác.</p>
+        
+        <div class="settings-box">
+            <h3 style="margin-bottom: 12px; border-bottom: 1px solid #ddd; padding-bottom: 5px;">Tùy chọn bài làm:</h3>
+            <label class="setting-item">
+                <input type="checkbox" id="setting-shuffle-questions" checked>
+                Xáo trộn thứ tự câu hỏi
+            </label>
+            <label class="setting-item">
+                <input type="checkbox" id="setting-shuffle-options" checked>
+                Xáo trộn các đáp án
+            </label>
+            <label class="setting-item">
+                <input type="checkbox" id="setting-timer">
+                Tính thời gian (15 giây/câu)
+            </label>
+            <label class="setting-item">
+                <input type="checkbox" id="setting-music" checked>
+                Phát âm thanh & nhạc nền
+            </label>
+        </div>
+
+        <button id="btn-start" class="btn-primary" style="font-size: 1.3rem; padding: 12px 36px;">
+            <svg class="icon-svg" viewBox="0 0 24 24"><path d="M8,5.14V19.14L19,12.14L8,5.14Z"/></svg>
+            Bắt đầu ngay
+        </button>
+    </section>
+
+    <!-- 2. Màn hình Làm bài -->
+    <section id="quiz-screen" class="screen">
+        <div class="quiz-header">
+            <div class="progress-text">Câu <span id="current-question-num">1</span> / <span id="total-questions-num">20</span></div>
+            <div class="timer" id="timer-display" style="display: none;">15s</div>
+        </div>
+
+        <div class="question-card">
+            <div class="question-text" id="question-text">Nội dung câu hỏi sẽ hiển thị ở đây?</div>
+            <div class="options-grid" id="options-grid">
+                <!-- Nút đáp án được tạo bằng JavaScript -->
+            </div>
+            
+            <div id="feedback-box" class="feedback-box">
+                <div class="feedback-title" id="feedback-title">Chính xác!</div>
+                <div class="feedback-text" id="feedback-explanation">Lời giải thích chi tiết sẽ nằm ở đây.</div>
+            </div>
+
+            <div class="next-action" id="next-action-box">
+                <button id="btn-next" class="btn-primary">
+                    Câu tiếp theo
+                    <svg class="icon-svg" viewBox="0 0 24 24"><path d="M4,11V13H16L10.5,18.5L11.92,19.92L19.84,12L11.92,4.08L10.5,5.5L16,11H4Z"/></svg>
+                </button>
+            </div>
+        </div>
+
+        <div class="progress-bar-container">
+            <div class="progress-bar-fill" id="progress-bar"></div>
+        </div>
+    </section>
+
+    <!-- 3. Màn hình Kết quả -->
+    <section id="result-screen" class="screen">
+        <div class="welcome-icon">🏆</div>
+        <h1 class="welcome-title">Hoàn Thành Bài Tập!</h1>
+        <p class="welcome-desc">Chúc mừng em đã hoàn thành bài ôn tập lịch sử.</p>
+
+        <div class="result-score">
+            <span id="final-score">0</span> / 10 Điểm
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value color-correct" id="stat-correct">0</div>
+                <div class="stat-label">Câu Đúng</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value color-incorrect" id="stat-incorrect">0</div>
+                <div class="stat-label">Câu Sai</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value color-time" id="stat-time">00:00</div>
+                <div class="stat-label">Thời Gian</div>
+            </div>
+        </div>
+
+        <div class="result-actions">
+            <button id="btn-retry" class="btn-secondary">
+                <svg class="icon-svg" viewBox="0 0 24 24"><path d="M12,5V1L7,6L12,11V7A6,6 0 0,1 18,13A6,6 0 0,1 12,19A6,6 0 0,1 6,13H4A8,8 0 0,0 12,21A8,8 0 0,0 20,13A8,8 0 0,0 12,5Z"/></svg>
+                Làm lại bài này
+            </button>
+            <button id="btn-home" class="btn-primary">
+                <svg class="icon-svg" viewBox="0 0 24 24"><path d="M10,20V14H14V20H19V12H22L12,3L2,12H5V20H10Z"/></svg>
+                Về trang chủ
+            </button>
+        </div>
+    </section>
+
+</div>
+
+<script>
+    /**
+     * =========================================================================
+     * PHẦN DỮ LIỆU CÂU HỎI (DÀNH CHO GIÁO VIÊN CHỈNH SỬA)
+     * Thầy/Cô có thể thay đổi nội dung, thêm hoặc bớt câu hỏi tại đây.
+     * Cấu trúc một câu hỏi gồm:
+     * - question: Nội dung câu hỏi.
+     * - options: Mảng chứa 4 đáp án (nằm trong ngoặc vuông [], cách nhau bởi dấu phẩy).
+     * - answer: Đáp án đúng (PHẢI GIỐNG Y HỆT MỘT TRONG 4 ĐÁP ÁN Ở TRÊN).
+     * - explanation: Lời giải thích sẽ hiện ra sau khi học sinh chọn đáp án.
+     * =========================================================================
+     */
+    const QUIZ_DATA = [
+        {
+            question: "Nhà nước đầu tiên của nước ta tên là gì?",
+            options: ["Văn Lang", "Âu Lạc", "Đại Việt", "Đại Ngu"],
+            answer: "Văn Lang",
+            explanation: "Nhà nước Văn Lang là nhà nước đầu tiên trong lịch sử Việt Nam, do các Vua Hùng đứng đầu, đóng đô ở Phong Châu (Phú Thọ)."
+        },
+        {
+            question: "Cuộc khởi nghĩa Hai Bà Trưng nổ ra vào năm nào?",
+            options: ["Năm 40", "Năm 248", "Năm 542", "Năm 938"],
+            answer: "Năm 40",
+            explanation: "Mùa xuân năm 40, Hai Bà Trưng (Trưng Trắc, Trưng Nhị) đã phất cờ khởi nghĩa ở Hát Môn (Hà Nội) để chống lại ách đô hộ của nhà Đông Hán."
+        },
+        {
+            question: "Trận chiến trên sông Bạch Đằng năm 938 do ai lãnh đạo?",
+            options: ["Lý Thường Kiệt", "Trần Hưng Đạo", "Ngô Quyền", "Lê Hoàn"],
+            answer: "Ngô Quyền",
+            explanation: "Năm 938, Ngô Quyền lãnh đạo nhân dân đánh bại quân Nam Hán trên sông Bạch Đằng, chấm dứt hơn 1000 năm Bắc thuộc."
+        },
+        {
+            question: "Lý Thái Tổ dời đô từ Hoa Lư về thành Đại La (sau đổi là Thăng Long) vào năm nào?",
+            options: ["1009", "1010", "1054", "1070"],
+            answer: "1010",
+            explanation: "Mùa thu năm 1010, vua Lý Thái Tổ ban 'Thiên đô chiếu', quyết định dời đô từ Hoa Lư (Ninh Bình) về Đại La và đổi tên là Thăng Long."
+        },
+        {
+            question: "Ai là tác giả của bài 'Hịch tướng sĩ'?",
+            options: ["Trần Thủ Độ", "Trần Quốc Toản", "Trần Hưng Đạo", "Trần Nhân Tông"],
+            answer: "Trần Hưng Đạo",
+            explanation: "Hưng Đạo vương Trần Quốc Tuấn (Trần Hưng Đạo) đã viết Hịch tướng sĩ để khích lệ tinh thần chiến đấu của quân đội nhà Trần trước cuộc kháng chiến chống quân Mông-Nguyên."
+        },
+        {
+            question: "Bộ luật nào được ban hành dưới thời vua Lê Thánh Tông?",
+            options: ["Luật Hình thư", "Luật Hồng Đức", "Luật Gia Long", "Hoàng Việt luật lệ"],
+            answer: "Luật Hồng Đức",
+            explanation: "Bộ Quốc triều hình luật, thường được gọi là Luật Hồng Đức, là bộ luật đồ sộ và hoàn thiện nhất của chế độ phong kiến Việt Nam do vua Lê Thánh Tông ban hành."
+        },
+        {
+            question: "Phong trào nông dân Tây Sơn bùng nổ vào năm nào?",
+            options: ["1771", "1785", "1789", "1802"],
+            answer: "1771",
+            explanation: "Mùa xuân năm 1771, ba anh em Nguyễn Nhạc, Nguyễn Huệ, Nguyễn Lữ dựng cờ khởi nghĩa ở vùng Tây Sơn thượng đạo (Bình Định)."
+        },
+        {
+            question: "Vua Quang Trung đại phá 29 vạn quân Thanh vào dịp Tết nào?",
+            options: ["Tết Kỷ Dậu (1789)", "Tết Mậu Thân (1788)", "Tết Canh Tuất (1790)", "Tết Đinh Mùi (1787)"],
+            answer: "Tết Kỷ Dậu (1789)",
+            explanation: "Sáng mùng 5 Tết Kỷ Dậu (1789), nghĩa quân Tây Sơn dưới sự chỉ huy của vua Quang Trung đã tiến vào Thăng Long, đánh bại hoàn toàn 29 vạn quân Thanh."
+        },
+        {
+            question: "Triều đại nào tồn tại lâu nhất trong lịch sử phong kiến Việt Nam?",
+            options: ["Nhà Lý", "Nhà Trần", "Nhà Hậu Lê", "Nhà Nguyễn"],
+            answer: "Nhà Hậu Lê",
+            explanation: "Nhà Hậu Lê (gồm Lê sơ và Lê trung hưng) tồn tại tổng cộng 355 năm (1428 - 1789), là triều đại phong kiến tồn tại lâu nhất trong lịch sử nước ta."
+        },
+        {
+            question: "Tên gọi nước ta dưới thời vua Đinh Tiên Hoàng là gì?",
+            options: ["Đại Việt", "Đại Nam", "Vạn Xuân", "Đại Cồ Việt"],
+            answer: "Đại Cồ Việt",
+            explanation: "Năm 968, Đinh Bộ Lĩnh lên ngôi Hoàng đế (Đinh Tiên Hoàng), đặt tên nước là Đại Cồ Việt (nước Việt lớn)."
+        },
+        {
+            question: "Nguyễn Tất Thành (Bác Hồ) ra đi tìm đường cứu nước từ Bến cảng Nhà Rồng vào năm nào?",
+            options: ["1908", "1911", "1920", "1930"],
+            answer: "1911",
+            explanation: "Ngày 5/6/1911, trên con tàu Amiral Latouche Tréville, người thanh niên yêu nước Nguyễn Tất Thành đã rời Bến cảng Nhà Rồng ra đi tìm đường cứu nước."
+        },
+        {
+            question: "Đảng Cộng sản Việt Nam ra đời vào ngày tháng năm nào?",
+            options: ["3/2/1930", "19/8/1945", "2/9/1945", "19/12/1946"],
+            answer: "3/2/1930",
+            explanation: "Đảng Cộng sản Việt Nam được thành lập vào ngày 3/2/1930 tại Cửu Long, Hương Cảng (Trung Quốc) do Nguyễn Ái Quốc chủ trì hội nghị hợp nhất."
+        },
+        {
+            question: "Nước Việt Nam Dân chủ Cộng hòa chính thức ra đời vào ngày nào?",
+            options: ["19/8/1945", "2/9/1945", "19/12/1946", "7/5/1954"],
+            answer: "2/9/1945",
+            explanation: "Ngày 2/9/1945, tại Quảng trường Ba Đình, Chủ tịch Hồ Chí Minh đọc Tuyên ngôn Độc lập, khai sinh ra nước Việt Nam Dân chủ Cộng hòa."
+        },
+        {
+            question: "Chiến dịch lịch sử Điện Biên Phủ kết thúc thắng lợi vào ngày nào?",
+            options: ["7/5/1954", "20/7/1954", "30/4/1975", "27/1/1973"],
+            answer: "7/5/1954",
+            explanation: "Chiều ngày 7/5/1954, lá cờ 'Quyết chiến quyết thắng' của quân đội ta tung bay trên nóc hầm tướng De Castries, đánh dấu sự thắng lợi hoàn toàn của chiến dịch."
+        },
+        {
+            question: "Tác giả của 'Bình Ngô đại cáo' là ai?",
+            options: ["Lê Lợi", "Nguyễn Trãi", "Lê Thánh Tông", "Nguyễn Bỉnh Khiêm"],
+            answer: "Nguyễn Trãi",
+            explanation: "Năm 1428, sau khi đánh đuổi quân Minh, Nguyễn Trãi thừa lệnh Lê Lợi soạn thảo 'Bình Ngô đại cáo' để bá cáo thiên hạ về việc dẹp yên giặc ngoại xâm."
+        },
+        {
+            question: "Ai là vị vua cuối cùng của triều đại phong kiến nhà Nguyễn?",
+            options: ["Khải Định", "Đồng Khánh", "Duy Tân", "Bảo Đại"],
+            answer: "Bảo Đại",
+            explanation: "Vua Bảo Đại là vị hoàng đế cuối cùng của nhà Nguyễn và cũng là vị vua cuối cùng trong lịch sử phong kiến Việt Nam (thoái vị tháng 8/1945)."
+        },
+        {
+            question: "Khởi nghĩa Hương Khê (phong trào Cần Vương) do ai lãnh đạo chính?",
+            options: ["Phan Đình Phùng", "Hoàng Hoa Thám", "Nguyễn Thiện Thuật", "Đinh Công Tráng"],
+            answer: "Phan Đình Phùng",
+            explanation: "Khởi nghĩa Hương Khê (1885 - 1896) là cuộc khởi nghĩa tiêu biểu nhất trong phong trào Cần Vương, do Phan Đình Phùng và Cao Thắng lãnh đạo."
+        },
+        {
+            question: "'Bao giờ người Tây nhổ hết cỏ nước Nam thì mới hết người Nam đánh Tây' là câu nói nổi tiếng của ai?",
+            options: ["Nguyễn Đình Chiểu", "Trương Định", "Nguyễn Trung Trực", "Thủ khoa Huân"],
+            answer: "Nguyễn Trung Trực",
+            explanation: "Đây là câu nói khảng khái của anh hùng dân tộc Nguyễn Trung Trực trước khi bị thực dân Pháp xử chém tại Kiên Giang."
+        },
+        {
+            question: "Trận 'Điện Biên Phủ trên không' đánh bại B-52 của đế quốc Mỹ diễn ra vào năm nào?",
+            options: ["1968", "1972", "1973", "1975"],
+            answer: "1972",
+            explanation: "Cuối tháng 12/1972, quân dân miền Bắc đã đập tan cuộc tập kích chiến lược bằng B-52 của Mỹ trong 12 ngày đêm, làm nên chiến thắng 'Điện Biên Phủ trên không'."
+        },
+        {
+            question: "Chiến dịch Hồ Chí Minh lịch sử, giải phóng hoàn toàn miền Nam, thống nhất đất nước kết thúc vào ngày nào?",
+            options: ["27/1/1973", "26/4/1975", "30/4/1975", "1/5/1975"],
+            answer: "30/4/1975",
+            explanation: "Trưa ngày 30/4/1975, xe tăng của quân giải phóng tiến vào Dinh Độc Lập, Tổng thống Dương Văn Minh tuyên bố đầu hàng không điều kiện, đất nước hoàn toàn thống nhất."
+        }
+    ];
+
+    /**
+     * =========================================================================
+     * PHẦN LOGIC ỨNG DỤNG (LẬP TRÌNH VIÊN XỬ LÝ)
+     * =========================================================================
+     */
+    
+    // Các biến trạng thái
+    let currentQuestions = [];
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let correctCount = 0;
+    let incorrectCount = 0;
+    let startTime = 0;
+    let endTime = 0;
+    let timerInterval;
+    let timeLeft = 15;
+    
+    // Cài đặt
+    let isTimerEnabled = false;
+    let isShuffleQuestions = true;
+    let isShuffleOptions = true;
+    let isAudioEnabled = true;
+
+    // Elements
+    const screenWelcome = document.getElementById('welcome-screen');
+    const screenQuiz = document.getElementById('quiz-screen');
+    const screenResult = document.getElementById('result-screen');
+    
+    const btnStart = document.getElementById('btn-start');
+    const btnNext = document.getElementById('btn-next');
+    const btnRetry = document.getElementById('btn-retry');
+    const btnHome = document.getElementById('btn-home');
+    const btnHomeNav = document.getElementById('btn-home-nav');
+    const btnToggleMusic = document.getElementById('btn-toggle-music');
+    
+    const optionsGrid = document.getElementById('options-grid');
+    const feedbackBox = document.getElementById('feedback-box');
+    const nextActionBox = document.getElementById('next-action-box');
+    
+    // Âm thanh (Web Audio API - Không cần file ngoài)
+    let audioCtx = null;
+    let isMusicPlaying = false;
+    let musicInterval = null;
+
+    // Khởi tạo Audio Context khi có tương tác người dùng
+    function initAudio() {
+        if (!audioCtx) {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+    }
+
+    function playTone(freq, type, duration, vol=0.1) {
+        if (!isAudioEnabled || !audioCtx) return;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+    }
+
+    function playSoundCorrect() {
+        if(audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+        playTone(600, 'sine', 0.1);
+        setTimeout(() => playTone(800, 'sine', 0.2), 100);
+    }
+
+    function playSoundIncorrect() {
+        if(audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+        playTone(300, 'sawtooth', 0.3, 0.05);
+        setTimeout(() => playTone(250, 'sawtooth', 0.4, 0.05), 200);
+    }
+
+    function playSoundComplete() {
+        if(audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+        [523.25, 659.25, 783.99, 1046.50].forEach((freq, i) => {
+            setTimeout(() => playTone(freq, 'sine', 0.4, 0.1), i * 150);
+        });
+    }
+
+    // Nhạc nền đơn giản (Mô phỏng âm thanh thư giãn)
+    function toggleBGM() {
+        if (!audioCtx) initAudio();
+        if(audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+
+        isMusicPlaying = !isMusicPlaying;
+        document.getElementById('icon-music-on').style.display = isMusicPlaying ? 'block' : 'none';
+        document.getElementById('icon-music-off').style.display = isMusicPlaying ? 'none' : 'block';
+        
+        if (isMusicPlaying) {
+            const notes = [261.63, 329.63, 392.00, 523.25]; // Đô trưởng
+            let noteIdx = 0;
+            musicInterval = setInterval(() => {
+                if(isMusicPlaying && isAudioEnabled) {
+                    playTone(notes[noteIdx], 'sine', 2, 0.02);
+                    noteIdx = (noteIdx + 1) % notes.length;
+                }
+            }, 2000);
+        } else {
+            clearInterval(musicInterval);
+        }
+    }
+
+    // Tiện ích xáo trộn mảng
+    function shuffleArray(array) {
+        let currentIndex = array.length, randomIndex;
+        while (currentIndex !== 0) {
+            randomIndex = Math.floor(Math.random() * currentIndex);
+            currentIndex--;
+            [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+        }
+        return array;
+    }
+
+    // Chuyển màn hình
+    function showScreen(screenEl) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        screenEl.classList.add('active');
+        window.scrollTo(0, 0);
+    }
+
+    // Bắt đầu Quiz
+    function startQuiz() {
+        // Đọc cài đặt
+        isShuffleQuestions = document.getElementById('setting-shuffle-questions').checked;
+        isShuffleOptions = document.getElementById('setting-shuffle-options').checked;
+        isTimerEnabled = document.getElementById('setting-timer').checked;
+        isAudioEnabled = document.getElementById('setting-music').checked;
+
+        // Xử lý Audio
+        initAudio();
+        if (isAudioEnabled && !isMusicPlaying) {
+            toggleBGM();
+        }
+        btnToggleMusic.style.display = 'flex';
+        btnHomeNav.style.display = 'flex';
+
+        // Khởi tạo dữ liệu
+        currentQuestions = JSON.parse(JSON.stringify(QUIZ_DATA)); // Clone data
+        if (isShuffleQuestions) {
+            shuffleArray(currentQuestions);
+        }
+        
+        currentQuestionIndex = 0;
+        score = 0;
+        correctCount = 0;
+        incorrectCount = 0;
+        startTime = Date.now();
+
+        document.getElementById('total-questions-num').textContent = currentQuestions.length;
+        document.getElementById('timer-display').style.display = isTimerEnabled ? 'block' : 'none';
+
+        showScreen(screenQuiz);
+        loadQuestion();
+    }
+
+    // Tải câu hỏi
+    function loadQuestion() {
+        resetQuestionUI();
+        
+        const qData = currentQuestions[currentQuestionIndex];
+        document.getElementById('current-question-num').textContent = currentQuestionIndex + 1;
+        document.getElementById('question-text').textContent = qData.question;
+
+        // Thanh tiến trình
+        const progressPercent = ((currentQuestionIndex) / currentQuestions.length) * 100;
+        document.getElementById('progress-bar').style.width = `${progressPercent}%`;
+
+        // Chuẩn bị đáp án
+        let options = [...qData.options];
+        if (isShuffleOptions) {
+            shuffleArray(options);
+        }
+
+        optionsGrid.innerHTML = '';
+        options.forEach((opt, index) => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.textContent = `${String.fromCharCode(65 + index)}. ${opt}`;
+            btn.onclick = () => selectOption(btn, opt, qData.answer, qData.explanation);
+            optionsGrid.appendChild(btn);
+        });
+
+        // Bắt đầu đếm ngược nếu bật
+        if (isTimerEnabled) {
+            timeLeft = 15;
+            updateTimerDisplay();
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                updateTimerDisplay();
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    handleTimeOut(qData.answer, qData.explanation);
+                }
+            }, 1000);
+        }
+    }
+
+    function updateTimerDisplay() {
+        const timerEl = document.getElementById('timer-display');
+        timerEl.textContent = `${timeLeft}s`;
+        if (timeLeft <= 5) {
+            timerEl.style.backgroundColor = 'var(--incorrect-color)';
+        } else {
+            timerEl.style.backgroundColor = 'var(--secondary-color)';
+        }
+    }
+
+    function resetQuestionUI() {
+        feedbackBox.className = 'feedback-box';
+        feedbackBox.style.display = 'none';
+        nextActionBox.style.display = 'none';
+        btnNext.disabled = false;
+    }
+
+    // Xử lý khi chọn đáp án
+    function selectOption(selectedBtn, selectedText, correctAnswer, explanation) {
+        clearInterval(timerInterval);
+        
+        // Vô hiệu hóa tất cả các nút
+        const allBtns = optionsGrid.querySelectorAll('.option-btn');
+        allBtns.forEach(btn => btn.disabled = true);
+
+        const isCorrect = selectedText === correctAnswer;
+        
+        selectedBtn.classList.add('selected');
+
+        if (isCorrect) {
+            selectedBtn.classList.add('correct');
+            playSoundCorrect();
+            correctCount++;
+            score += 10 / currentQuestions.length; // Tính điểm hệ 10
+            showFeedback(true, explanation);
+        } else {
+            selectedBtn.classList.add('incorrect');
+            playSoundIncorrect();
+            incorrectCount++;
+            // Tìm và highlight đáp án đúng
+            allBtns.forEach(btn => {
+                const buttonContent = btn.textContent.substring(3);
+                if (buttonContent === correctAnswer) {
+                    btn.classList.add('correct');
+                    btn.style.boxShadow = '0 0 0 3px var(--correct-color)';
+                }
+            });
+            showFeedback(false, explanation);
+        }
+    }
+
+    // Hết thời gian
+    function handleTimeOut(correctAnswer, explanation) {
+        incorrectCount++;
+        playSoundIncorrect();
+        const allBtns = optionsGrid.querySelectorAll('.option-btn');
+        allBtns.forEach(btn => {
+            btn.disabled = true;
+            const buttonContent = btn.textContent.substring(3);
+            if (buttonContent === correctAnswer) {
+                btn.classList.add('correct');
+            }
+        });
+        showFeedback(false, explanation, "Hết thời gian!");
+    }
+
+    // Hiển thị phản hồi và tự động cuộn
+    function showFeedback(isCorrect, explanation, customTitle = null) {
+        feedbackBox.style.display = 'block';
+        feedbackBox.className = `feedback-box ${isCorrect ? 'correct' : 'incorrect'}`;
+        
+        const title = customTitle ? customTitle : (isCorrect ? 'Chính xác! 🎉' : 'Chưa chính xác! 💡');
+        document.getElementById('feedback-title').textContent = title;
+        document.getElementById('feedback-explanation').textContent = explanation;
+        
+        nextActionBox.style.display = 'block';
+
+        // Tự động cuộn xuống để thấy lời giải và nút tiếp theo
+        setTimeout(() => {
+            nextActionBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 100);
+    }
+
+    // Chuyển câu tiếp theo hoặc kết thúc
+    function handleNext() {
+        currentQuestionIndex++;
+        if (currentQuestionIndex < currentQuestions.length) {
+            loadQuestion();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        } else {
+            showResult();
+        }
+    }
+
+    // Màn hình kết quả
+    function showResult() {
+        endTime = Date.now();
+        playSoundComplete();
+        clearInterval(timerInterval);
+        
+        const timeSpent = Math.floor((endTime - startTime) / 1000);
+        const minutes = Math.floor(timeSpent / 60);
+        const seconds = timeSpent % 60;
+
+        document.getElementById('progress-bar').style.width = '100%';
+        
+        // Điểm hệ 10 làm tròn 1 chữ số thập phân
+        let finalScore = (correctCount / currentQuestions.length) * 10;
+        finalScore = Math.round(finalScore * 10) / 10;
+
+        document.getElementById('final-score').textContent = finalScore;
+        document.getElementById('stat-correct').textContent = correctCount;
+        document.getElementById('stat-incorrect').textContent = incorrectCount;
+        document.getElementById('stat-time').textContent = `${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+
+        showScreen(screenResult);
+    }
+
+    // Quay về trang chủ
+    function goHome() {
+        clearInterval(timerInterval);
+        showScreen(screenWelcome);
+    }
+
+    // Gắn sự kiện
+    btnStart.addEventListener('click', startQuiz);
+    btnNext.addEventListener('click', handleNext);
+    btnRetry.addEventListener('click', startQuiz);
+    btnHome.addEventListener('click', goHome);
+    btnHomeNav.addEventListener('click', goHome);
+    btnToggleMusic.addEventListener('click', toggleBGM);
+
+</script>
+</body>
+</html>
